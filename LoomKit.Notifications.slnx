@@ -2,4 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/LoomKit.Notifications.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LoomKit.Notifications.Tests/LoomKit.Notifications.Tests.csproj" />
+  </Folder>
 </Solution>
