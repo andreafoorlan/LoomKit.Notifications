@@ -7,7 +7,7 @@ public abstract class NotificationDispatcherOptions
     /*
     * The lifetime of the NotificationDispatcher service in the DI
     */
-    public ServiceLifetime ServiceLifetime { get; init; } = ServiceLifetime.Scoped;
+    public ServiceLifetime ServiceLifetime { get; init; } = ServiceLifetime.Singleton;
 
     /*
     * Read-Only list of middlewares executed on each notification, can be modified earlier using builder

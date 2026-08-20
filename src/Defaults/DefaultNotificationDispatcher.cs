@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Numerics;
 using LoomKit.Notifications.Abstracts;
 using LoomKit.Notifications.Contracts;
 using LoomKit.Notifications.Telemetry;
@@ -24,12 +23,13 @@ public class DefaultNotificationDispatcher : NotificationDispatcher<DefaultNotif
         : base(notificationDispatcherOptions)
     {
         // deps
+        ArgumentNullException.ThrowIfNull(serviceProvider);
         _serviceProvider = serviceProvider;
     }
 
-    public override Task DispatchAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
+    public override async Task DispatchAsync<TNotification>(TNotification notification, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await InnerNotificationDispatchAsync(notification, cancellationToken);
     }
 
     protected virtual async Task InnerNotificationDispatchAsync<TNotification>(TNotification notification, CancellationToken? cancellationToken = null)
@@ -60,7 +60,7 @@ public class DefaultNotificationDispatcher : NotificationDispatcher<DefaultNotif
             .Select(handler => (INotificationHandler<TNotification>)handler!);
 
         // 
-        using var dispatchActivity = NotificationsActivatorSource.Source.StartActivity($"notification.dispatch {notificationType.Name}", ActivityKind.Internal);
+        using var dispatchActivity = NotificationsActivitySource.Source.StartActivity($"notification.dispatch {notificationType.Name}", ActivityKind.Internal);
         dispatchActivity?.SetTag("notification.type", notificationType.FullName);
 
         // create the middleware pipeline from middleware types for each notification handler resolved with DI
@@ -74,7 +74,7 @@ public class DefaultNotificationDispatcher : NotificationDispatcher<DefaultNotif
                 currentHandler = (INotificationHandler<TNotification>)middlewareFactory(_serviceProvider, [currentHandler]);
             }
 
-            using var handleActivity = NotificationsActivatorSource.Source.StartActivity($"notification.handle {notificationType.Name}", ActivityKind.Internal);
+            using var handleActivity = NotificationsActivitySource.Source.StartActivity($"notification.handle {notificationType.Name}", ActivityKind.Internal);
             handleActivity?.SetTag("notification.type", notificationType.FullName);
             handleActivity?.SetTag("handler.type", handlerType.FullName);
 

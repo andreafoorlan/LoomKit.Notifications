@@ -10,6 +10,7 @@ public abstract class NotificationMiddleware<TNotification> : INotificationHandl
     protected NotificationMiddleware(INotificationHandler<TNotification> nextHandler)
     {
         // deps
+        ArgumentNullException.ThrowIfNull(nextHandler);
         _nextHandler = nextHandler;
     }
 

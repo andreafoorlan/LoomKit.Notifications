@@ -10,6 +10,7 @@ public abstract class NotificationDispatcher<TNotificationDispatcherOptions> : I
     protected NotificationDispatcher(TNotificationDispatcherOptions notificationDispatcherOptions)
     {
         // deps
+        ArgumentNullException.ThrowIfNull(notificationDispatcherOptions);
         _notificationDispatcherOptions = notificationDispatcherOptions;
     }
 

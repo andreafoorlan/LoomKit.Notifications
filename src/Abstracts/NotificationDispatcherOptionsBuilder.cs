@@ -1,16 +1,25 @@
 using System.Collections.Immutable;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LoomKit.Notifications.Abstracts;
 
 public abstract class NotificationDispatcherOptionsBuilder<TNotificationDispatcherOptions>
     where TNotificationDispatcherOptions : NotificationDispatcherOptions, new()
 {
-    private LinkedList<Type> _notificationMiddlewareTypes;
+    private ServiceLifetime _serviceLifeTime = ServiceLifetime.Scoped;
+    private readonly LinkedList<Type> _notificationMiddlewareTypes;
 
     public NotificationDispatcherOptionsBuilder()
     {
         // inits
         _notificationMiddlewareTypes = new LinkedList<Type>();
+    }
+
+    public NotificationDispatcherOptionsBuilder<TNotificationDispatcherOptions> WithLifetime(ServiceLifetime serviceLifetime)
+    {
+        _serviceLifeTime = serviceLifetime;
+
+        return this;
     }
 
     public NotificationDispatcherOptionsBuilder<TNotificationDispatcherOptions> ClearNotificationMiddlewares()
@@ -34,7 +43,7 @@ public abstract class NotificationDispatcherOptionsBuilder<TNotificationDispatch
             throw new ArgumentException("Middleware type must be an open generic type", nameof(notificationMiddlewareType));
         }
 
-        // check if middlewareType implements JobMiddleware<>
+        // check if middlewareType implements NotificationMiddleware<>
         if (!DerivesFromOpenGeneric(notificationMiddlewareType, typeof(NotificationMiddleware<>)))
             throw new ArgumentException("Middleware type must implement NotificationMiddleware<>", nameof(notificationMiddlewareType));
 
@@ -50,6 +59,7 @@ public abstract class NotificationDispatcherOptionsBuilder<TNotificationDispatch
         //
         return new TNotificationDispatcherOptions()
         {
+            ServiceLifetime = _serviceLifeTime,
             NotificationMiddlewareTypes = _notificationMiddlewareTypes.ToImmutableList(),
         };
     }
