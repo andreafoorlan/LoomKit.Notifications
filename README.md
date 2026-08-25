@@ -16,7 +16,18 @@ A lightweight in-process notification / pub-sub library for .NET: dispatch a not
 ## Requirements
 
 - .NET 10 or later
-- No runtime dependency beyond `Microsoft.Extensions.DependencyInjection.Abstractions`
+- Depends on [`LoomKit.Notifications.Abstractions`](https://github.com/andreafoorlan/LoomKit.Notifications.Abstractions) (the interfaces and abstract base types, in their own package) and `Microsoft.Extensions.DependencyInjection.Abstractions` — no other runtime dependency
+
+## Architecture: split from `LoomKit.Notifications.Abstractions`
+
+The interfaces (`INotification`, `INotificationHandler<>`, `INotificationDispatcher`) and abstract base types (`NotificationMiddleware<>`, `NotificationDispatcher<>`, `NotificationDispatcherOptions`, `NotificationDispatcherOptionsBuilder<>`) live in the separate, lighter [`LoomKit.Notifications.Abstractions`](https://github.com/andreafoorlan/LoomKit.Notifications.Abstractions) package, which this package references. `LoomKit.Notifications` adds the concrete pieces on top: `DefaultNotificationDispatcher`, the DI registration helpers, assembly-scanning handler discovery, and tracing.
+
+This means a project that only needs to *define* notifications/handlers — typically a domain/DDD class library that shouldn't know how notifications get dispatched — can depend on `LoomKit.Notifications.Abstractions` alone, keeping the concrete dispatcher implementation confined to your application/composition-root layer:
+
+```bash
+dotnet add package LoomKit.Notifications.Abstractions   # domain layer: define INotification/INotificationHandler
+dotnet add package LoomKit.Notifications                # application layer: wire up the dispatcher
+```
 
 ## Installation
 
@@ -26,7 +37,7 @@ A lightweight in-process notification / pub-sub library for .NET: dispatch a not
 dotnet add package LoomKit.Notifications
 ```
 
-Available on [nuget.org](https://www.nuget.org/packages/LoomKit.Notifications) once the first tagged release (`v1.0.0`) has been published — a package version is published automatically for every `vX.Y.Z` tag pushed to this repo.
+Available on [nuget.org](https://www.nuget.org/packages/LoomKit.Notifications) — a package version is published automatically for every `vX.Y.Z` tag pushed to this repo.
 
 If you'd rather build against the source directly instead (e.g. to track `main`, or to debug/modify the library alongside your app), two options:
 
