@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>10.0.1</Version>
+    <Version>10.0.2</Version>
     <PackageId>LoomKit.Notifications</PackageId>
     <Authors>Andrea Furlan</Authors>
     <Description>A lightweight in-process notification/pub-sub library for .NET: dispatch notifications to zero or more DI-resolved handlers with an optional middleware pipeline.</Description>
@@ -25,6 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LoomKit.Notifications.Abstractions" Version="10.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
